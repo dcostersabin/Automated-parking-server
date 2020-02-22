@@ -1,0 +1,55 @@
+{% extends 'base/base.html' %}
+
+{% block heading %}
+    Hash For Cash
+{% endblock %}
+
+{% block main %}
+    <div class="row">
+
+
+        <div class="container col-md-6">
+            <form action="{% url 'redeem' %}" method="post">
+                {% csrf_token %}
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" name="hash">
+                    <span class="input-group-append">
+                    <button type="submit" class="btn btn-success btn-flat">Cash It</button>
+                  </span>
+                </div>
+            </form>
+            <!-- /input-group -->
+        </div>
+    </div>
+    <hr>
+    <h2 class="text-muted">Previous Records {% if total == 0 %}
+        (<small class="text-black-50">No Records Found</small>)
+    {% else %}
+        {{ total }}
+    {% endif %}</h2>
+    <hr>
+    <div class="row">
+
+        {% if total > 0 %}
+            {% for transaction in transactions %}
+                <div class="col-md-3">
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ transaction.type|upper }}</h3>
+                        </div>
+                        <div class="card-body">
+                            <span class="text-muted">Your Account Was Credited By rs <span class="text-success">{{ transaction.amount }}</span> At {{ transaction.created_at }}</span>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            {% endfor %}
+
+        {% endif %}
+    </div>
+
+
+
+{% endblock %}

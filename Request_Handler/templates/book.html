@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+{% block heading %}
+    Booking For <small class="text-success"> {{ venue.name }} <small class="text-secondary">{{ agent.id }}</small>
+</small>
+
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="col-md-8">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Select Your Parking Time For: ({{ agent.id }}) </h3>
+                </div>
+                <div class="card-body">
+                        <h5 class="text-muted"><br>Location: {{ venue.address }}</h5>
+
+                    <!-- /.form group -->
+
+
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+    </div>
+
+{% endblock %}
+
+
+
+
+
+
+

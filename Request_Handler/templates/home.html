@@ -1,0 +1,135 @@
+{% extends 'base/base.html' %}
+{% block top_right %}
+    {% if user.is_authenticated %}
+        <a href="{% url 'logout' %}" class="btn btn-secondary">LogOut</a>
+    {% else %}
+        <a href="{% url 'login' %}" class="btn btn-outline-success">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a>
+    {% endif %}
+{% endblock %}
+
+{% block heading %}
+    Home
+{% endblock %}
+
+{% block main %}
+    {% if booking %}
+        <div class="container-fluid">
+            <div class="row">
+
+
+                <div class="col-md-4">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Current Booking (Total:{{ booking.total_amount }})</h3>
+                            <div class="card-tools">
+                                <span class="ml-5">Paid : {{ booking.received }}</span>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            Space Status :
+                            {% if booking.agent.spaceStatus == 0 %}
+                                <span class="text-danger">   <i class="fas fa-car"></i>  </span>
+                            {% endif %}
+                            {% if booking.agent.spaceStatus == 1 %}
+                                <span class="text-success">   <i class="fas fa-car"></i>  </span>
+                            {% endif %}
+                            {% if booking.agent.spaceStatus == 4 %}
+                                <span class="text-danger">   <i class="fas fa-exclamation-triangle"></i>  </span>
+                            {% endif %}
+                            {% if booking.agent.spaceStatus == 3 %}
+                                <span class="text-danger">   <i class="fas fa-bug"></i> </span>
+                            {% endif %}
+
+                            <hr>
+                            <h5 class="text-muted"> Booked For : {{ booking.agent_id }} </h5>
+                            <hr>
+                            <h6 class=" text-success">From: {{ booking.startTime }} <span class=" ml-5 text-danger">Expires On : {{ booking.endTime }}
+                            <hr>
+                        </span>
+
+                            </h6>
+                            {% if booking.paidStatus %}
+                                <div>
+                                    {% if booking.agent.openCloseStatus %}
+                                        <form action="{% url 'openClose' %}" method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" value="{{ booking.agent_id }}" name="id">
+                                            <button type="submit" class=" btn btn-danger">Close</button>
+                                        </form>
+
+                                    {% else %}
+                                        <form action="{% url 'openClose' %}" method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="id" value="{{ booking.agent_id }}">
+                                            <button type="submit" class=" btn btn-success">Open</button>
+                                        </form>
+                                    {% endif %}
+
+
+                                </div>
+                            {% else %}
+                                <div>
+                                    <button type="button" class="btn btn-outline-secondary">CheckOut</button>
+                                </div>
+                            {% endif %}
+
+
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+
+
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        {% for foo in venue %}
+
+
+            <div class="col-md-3">
+                <!-- Widget: user widget style 2 -->
+                <div class="card card-widget widget-user-2 ">
+                    <!-- Add the bg color to the header using any of the bg-* classes -->
+                    <div class="widget-user-header bg-gray-light">
+                        <div class="widget-user-image ">
+                            <i class="img-circle elevation-2 fas fa-parking text-red"></i>
+                        </div>
+                        <!-- /.widget-user-image -->
+                        <h3 class="widget-user-username">{{ foo.name }}</h3>
+                        <h5 class="widget-user-desc">{{ foo.address }}</h5>
+                    </div>
+                    <div class="card-footer p-0 bg-white">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link">
+                                    Total Space
+                                    <spans
+                                            class="float-right badge bg-primary">{{ foo.total_agent }}</spans>
+                                </a>
+                            </li>
+
+
+                        </ul>
+                    </div>
+
+                    <div class="card-footer nav-item bg-white">
+                        <button class="btn btn-outline-success"
+                                onclick="window.location.href='/agent/?venue={{ foo.id }}'">Visit
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+        {% endfor %}
+    </div>
+
+
+
+{% endblock %}
+
