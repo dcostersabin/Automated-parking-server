@@ -16,6 +16,7 @@ urlpatterns = [
     path('redeem/',views.redeem,name='redeem'),
     path('transaction/',views.transaction,name='transaction'),
     path('bookAgent/',views.bookAgent,name='bookAgent'),
-    path('openClose/',views.openClose,name='openClose')
+    path('openClose/',views.openClose,name='openClose'),
+    path('checkout/',views.checkout,name='checkout'),
 
 ]

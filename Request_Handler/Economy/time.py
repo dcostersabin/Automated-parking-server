@@ -5,15 +5,12 @@ price = 60
 
 
 def checkTime(start, end):
-
     if end > start:
-
+        print(start)
+        print(end)
         nextTime = datetime.now() + timedelta(minutes=15)
-        diff = start - nextTime
-        return HttpResponse(diff)
-        a = str(diff).split(':', 3)
-        if (int(a[1]) >= 15) & (int(a[1]) <= 25):
-            print('a')
+        nextAddedTIme = datetime.now() + timedelta(minutes=25)
+        if (start >= nextTime) & (start <= nextAddedTIme):
             return True
         else:
             print('b')

@@ -32,8 +32,8 @@ class Agents(models.Model):
 
 class Booking(models.Model):
     agent = models.ForeignKey(Agents, null=False, on_delete=models.CASCADE)
-    startTime = models.CharField(null=False,max_length=255)
-    endTime = models.CharField(null=False,max_length=255)
+    startTime = models.CharField(null=False, max_length=255)
+    endTime = models.CharField(null=False, max_length=255)
     state = models.BooleanField(default=True)
     paidStatus = models.BooleanField(default=False)
     booked_by = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
@@ -46,3 +46,8 @@ class Transaction(models.Model):
     amount = models.FloatField()
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     created_at = models.DateTimeField()
+
+
+class bookedAgents(models.Model):
+    agent_id = models.ForeignKey(Agents, null=False, on_delete=models.CASCADE)
+    booked_id = models.ForeignKey(Booking, null=False, on_delete=models.CASCADE)

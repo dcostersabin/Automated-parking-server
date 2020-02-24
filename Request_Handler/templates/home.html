@@ -21,19 +21,29 @@
                 <div class="col-md-4">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Current Booking (Total:{{ booking.total_amount }})</h3>
-                            <div class="card-tools">
-                                <span class="ml-5">Paid : {{ booking.received }}</span>
-                            </div>
+                            <form action="{% url 'checkout' %}" method="POST">
+                                {% csrf_token %}
+                                <h3 class="card-title">Current Booking
+                                    (Total:{{ booking.total_amount|floatformat:2 }})</h3>
+                                <div class="card-tools">
+                                    <span class="ml-5">Paid : {{ booking.received|floatformat:2 }}</span>
+                                    <span>
+                                        <span class="ml-3">
+                                            <input type="hidden" name="booking" value="{{ booking.id }}">
+                                            <button type="submit" class="btn btn-danger ">CheckOut</button>
+                                        </span>
+                                    </span>
+                                </div>
+                            </form>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
                             Space Status :
                             {% if booking.agent.spaceStatus == 0 %}
-                                <span class="text-danger">   <i class="fas fa-car"></i>  </span>
+                                <span class="text-success">   <i class="fas fa-car"></i>  </span>
                             {% endif %}
                             {% if booking.agent.spaceStatus == 1 %}
-                                <span class="text-success">   <i class="fas fa-car"></i>  </span>
+                                <span class="text-danger">   <i class="fas fa-car"></i>  </span>
                             {% endif %}
                             {% if booking.agent.spaceStatus == 4 %}
                                 <span class="text-danger">   <i class="fas fa-exclamation-triangle"></i>  </span>
@@ -59,6 +69,7 @@
                                             <button type="submit" class=" btn btn-danger">Close</button>
                                         </form>
 
+
                                     {% else %}
                                         <form action="{% url 'openClose' %}" method="post">
                                             {% csrf_token %}
@@ -69,6 +80,7 @@
 
 
                                 </div>
+
                             {% else %}
                                 <div>
                                     <button type="button" class="btn btn-outline-secondary">CheckOut</button>

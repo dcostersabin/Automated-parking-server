@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from Request_Handler.Economy.create import createVenue, createDatabase
-from user.models import Venue, Agents, Transaction, Economy, UserDetails, Booking
+from user.models import Venue, Agents, Transaction, Economy, UserDetails, Booking, bookedAgents
 from Request_Handler.Economy.verify import verify, creditAccount, getBalance, debitUserAccount
 from datetime import datetime
 from Request_Handler.Economy.time import checkTime, getAmount
@@ -39,13 +39,20 @@ def arduino(request):
     agents = Agents.objects.filter(id=request.GET['id']).get()
     agents.spaceStatus = request.GET['spaceStatus']
     agents.save()
-    booking = Booking.objects.filter(agent=agents, state=True).get()
-    if datetime.now() >= datetime.strptime(booking.endTime, '%Y-%m-%d %H:%M:%S'):
-        booking.paidStatus = False
-        booking.save()
-        return HttpResponse('TrueFalse')
+    booked_state = bookedAgents.objects.filter(agent_id=agents.id).exists()
+    if booked_state:
+        booked_state = bookedAgents.objects.filter(agent_id=agents.id).get()
+        booking = Booking.objects.filter(id=booked_state.booked_id_id).get()
+
+        if datetime.now() >= datetime.strptime(booking.endTime, '%Y-%m-%d %H:%M:%S'):
+            booking.paidStatus = False
+            booking.save()
+            return HttpResponse('TrueFalse')
+        else:
+            return HttpResponse(str(agents.booked_status) + '' + str(agents.openCloseStatus))
+
     else:
-        return HttpResponse(str(agents.booked_status) + '' + str(agents.openCloseStatus))
+        return HttpResponse('FalseFalse')
 
 
 def test(request):
@@ -129,6 +136,10 @@ def bookAgent(request):
                     book.save()
                     agents.booked_status = True
                     agents.save()
+                    booked = bookedAgents()
+                    booked.agent_id = agents
+                    booked.booked_id = book
+                    booked.save()
                     messages.success(request, 'Booking Made Successfully')
                     return redirect('home')
 
@@ -154,3 +165,22 @@ def openClose(request):
             agents.openCloseStatus = True
             agents.save()
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def checkout(request):
+    book = Booking.objects.filter(id=request.POST['booking']).get()
+    agents = Agents.objects.filter(id=book.agent_id).get()
+    end_time = book.endTime
+    end_time_date = datetime.strptime(str(end_time), '%Y-%m-%d %H:%M:%S')
+    check = (datetime.now() <= end_time_date)
+    if check:
+        book.state = False
+        book.save()
+        agents.spaceStatus = 1
+        agents.booked_status = False
+        agents.save()
+        bookedAgents.objects.filter(booked_id=book, agent_id=agents).delete()
+        messages.success(request, 'You Have Successfully Checked Out From The System ThankYou')
+        return redirect('home')
+    else:
+        return False
